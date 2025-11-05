@@ -11,11 +11,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "log_access")
-public class LogAccess {
+public class LogAccess implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
