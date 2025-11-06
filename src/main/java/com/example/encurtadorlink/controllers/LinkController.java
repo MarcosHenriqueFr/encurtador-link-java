@@ -3,7 +3,6 @@ package com.example.encurtadorlink.controllers;
 import com.example.encurtadorlink.dto.LinkCreateDTO;
 import com.example.encurtadorlink.dto.LinkResponseDTO;
 import com.example.encurtadorlink.services.LinkService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +16,6 @@ public class LinkController {
 
     private final LinkService linkService;
 
-    @Autowired
     public LinkController(LinkService linkService){
         this.linkService = linkService;
     }

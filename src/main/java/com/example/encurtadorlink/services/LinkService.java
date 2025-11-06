@@ -6,7 +6,6 @@ import com.example.encurtadorlink.mapper.LinkMapper;
 import com.example.encurtadorlink.model.Link;
 import com.example.encurtadorlink.repositories.LinkRepository;
 import com.example.encurtadorlink.util.Base62;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -18,7 +17,6 @@ public class LinkService {
     private final LinkMapper linkMapper;
     private final LinkRepository linkRepository;
 
-    @Autowired
     public LinkService(LinkMapper linkMapper, LinkRepository linkRepository){
         this.linkMapper = linkMapper;
         this.linkRepository = linkRepository;
@@ -46,6 +44,17 @@ public class LinkService {
         saveLink(link);
 
         return linkMapper.fromEntity(link);
+    }
+
+    public String resolveShortCode(String shortCode){
+        Link link = linkRepository.findByShortCode(shortCode).orElse(null);
+
+        // TODO: Melhorar exception
+        if (link == null){
+            throw new RuntimeException("Essa URL encurtada não existe.");
+        }
+
+        return link.getOriginalUrl();
     }
 
     // TODO: Implementar o log do sistema aqui
