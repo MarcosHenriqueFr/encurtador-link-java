@@ -1,5 +1,6 @@
 package com.example.encurtadorlink.services;
 
+import com.example.encurtadorlink.config.exception.ShortLinkNotFoundException;
 import com.example.encurtadorlink.dto.LinkCreateDTO;
 import com.example.encurtadorlink.dto.LinkResponseDTO;
 import com.example.encurtadorlink.mapper.LinkMapper;
@@ -49,10 +50,14 @@ public class LinkService {
     public String resolveShortCode(String shortCode){
         Link link = linkRepository.findByShortCode(shortCode).orElse(null);
 
-        // TODO: Melhorar exception
         if (link == null){
-            throw new RuntimeException("Essa URL encurtada não existe.");
+            throw new ShortLinkNotFoundException("This URI could not be resolved.");
         }
+
+        int qtFinalClicks = link.getQtClicks() + 1;
+        link.setQtClicks(qtFinalClicks);
+
+        saveLink(link);
 
         return link.getOriginalUrl();
     }
