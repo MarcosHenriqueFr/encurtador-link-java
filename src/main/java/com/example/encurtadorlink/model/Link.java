@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @EqualsAndHashCode(of = "id")
 public class Link implements Serializable {
 
@@ -49,7 +51,7 @@ public class Link implements Serializable {
     private LocalDateTime creationDate;
 
     @Column(name = "qt_clicks")
-    private Integer qtClicks;
+    private Integer qtClicks = 0;
 
     @Column(name = "short_code", nullable = false, unique = true, length = 10)
     private String shortCode;

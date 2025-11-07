@@ -1,12 +1,12 @@
 package com.example.encurtadorlink.services;
 
+import com.example.encurtadorlink.config.exception.ShortLinkNotFoundException;
 import com.example.encurtadorlink.dto.LinkCreateDTO;
 import com.example.encurtadorlink.dto.LinkResponseDTO;
 import com.example.encurtadorlink.mapper.LinkMapper;
 import com.example.encurtadorlink.model.Link;
 import com.example.encurtadorlink.repositories.LinkRepository;
 import com.example.encurtadorlink.util.Base62;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -18,7 +18,6 @@ public class LinkService {
     private final LinkMapper linkMapper;
     private final LinkRepository linkRepository;
 
-    @Autowired
     public LinkService(LinkMapper linkMapper, LinkRepository linkRepository){
         this.linkMapper = linkMapper;
         this.linkRepository = linkRepository;
@@ -46,6 +45,26 @@ public class LinkService {
         saveLink(link);
 
         return linkMapper.fromEntity(link);
+    }
+
+    /**
+     * <p>Usado unicamente no controller de redirect para direcionar o usuário à página original</p>
+     * @param shortCode vindo do path URI da requisição
+     * @return A url original registrada no banco de dados
+     */
+    public String resolveShortCode(String shortCode){
+        Link link = linkRepository.findByShortCode(shortCode).orElse(null);
+
+        if (link == null){
+            throw new ShortLinkNotFoundException("This URI could not be resolved.");
+        }
+
+        int qtFinalClicks = link.getQtClicks() + 1;
+        link.setQtClicks(qtFinalClicks);
+
+        saveLink(link);
+
+        return link.getOriginalUrl();
     }
 
     // TODO: Implementar o log do sistema aqui
