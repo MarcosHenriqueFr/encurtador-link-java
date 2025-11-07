@@ -47,6 +47,11 @@ public class LinkService {
         return linkMapper.fromEntity(link);
     }
 
+    /**
+     * <p>Usado unicamente no controller de redirect para direcionar o usuário à página original</p>
+     * @param shortCode vindo do path URI da requisição
+     * @return A url original registrada no banco de dados
+     */
     public String resolveShortCode(String shortCode){
         Link link = linkRepository.findByShortCode(shortCode).orElse(null);
 
