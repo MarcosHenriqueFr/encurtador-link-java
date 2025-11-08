@@ -1,6 +1,6 @@
 package com.example.encurtadorlink.services;
 
-import com.example.encurtadorlink.config.exception.ShortLinkNotFoundException;
+import com.example.encurtadorlink.config.exception.ShortURLNotFoundException;
 import com.example.encurtadorlink.mapper.LinkMapper;
 import com.example.encurtadorlink.model.Link;
 import com.example.encurtadorlink.repositories.LinkRepository;
@@ -10,9 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.context.ActiveProfiles;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -70,7 +68,7 @@ class LinkServiceTest {
     void resolveShortCodeException(){
         when(linkRepository.findByShortCode(any())).thenReturn(Optional.empty());
 
-        ShortLinkNotFoundException thrown = Assertions.assertThrows(ShortLinkNotFoundException.class, () -> {
+        ShortURLNotFoundException thrown = Assertions.assertThrows(ShortURLNotFoundException.class, () -> {
             linkService.resolveShortCode(any());
         });
 

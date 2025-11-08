@@ -1,6 +1,7 @@
 package com.example.encurtadorlink.services;
 
-import com.example.encurtadorlink.config.exception.ShortLinkNotFoundException;
+import com.example.encurtadorlink.config.exception.ShortURLAlreadyExistsException;
+import com.example.encurtadorlink.config.exception.ShortURLNotFoundException;
 import com.example.encurtadorlink.dto.LinkCreateDTO;
 import com.example.encurtadorlink.dto.LinkResponseDTO;
 import com.example.encurtadorlink.mapper.LinkMapper;
@@ -31,15 +32,17 @@ public class LinkService {
     public LinkResponseDTO shortenLink(LinkCreateDTO dto) {
         Link link = linkMapper.toEntity(dto);
 
-        // TODO: Futuramente trocar esse tipo de exception
         String randomShortCode = generateRandomShortCode();
         if (!isShortCodeAvailable(randomShortCode)){
-            throw new RuntimeException("Esse shortcode já foi gerado!");
+            throw new ShortURLAlreadyExistsException("This short URI is not available.");
         }
 
         link.setShortCode(randomShortCode);
         link.setActive(true);
-        link.setUser(null); //TODO: Mudar depois da mecânica de login de usuário
+        link.setQtClicks(0);
+
+        //TODO: Mudar depois a funcionalidade com login de usuário
+        link.setUser(null);
         link.setCreationDate(LocalDateTime.now());
 
         saveLink(link);
@@ -56,7 +59,7 @@ public class LinkService {
         Link link = linkRepository.findByShortCode(shortCode).orElse(null);
 
         if (link == null){
-            throw new ShortLinkNotFoundException("This URI could not be resolved.");
+            throw new ShortURLNotFoundException("This URI could not be resolved.");
         }
 
         int qtFinalClicks = link.getQtClicks() + 1;
