@@ -12,6 +12,5 @@ import org.mapstruct.MappingConstants;
 public interface LinkMapper {
     Link toEntity(LinkCreateDTO dto);
 
-    @InheritInverseConfiguration
     LinkResponseDTO fromEntity(Link entity);
 }

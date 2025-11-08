@@ -18,7 +18,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -31,6 +31,7 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
+@ToString
 @EqualsAndHashCode(of = "id")
 public class Link implements Serializable {
 
@@ -50,8 +51,8 @@ public class Link implements Serializable {
     @Column(name = "creation_date", nullable = false)
     private LocalDateTime creationDate;
 
-    @Column(name = "qt_clicks")
-    private Integer qtClicks = 0;
+    @Column(name = "qt_clicks", nullable = false, columnDefinition = "int default 0")
+    private Integer qtClicks;
 
     @Column(name = "short_code", nullable = false, unique = true, length = 10)
     private String shortCode;
