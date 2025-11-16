@@ -1,6 +1,9 @@
 package com.example.encurtadorlink.services;
 
 import com.example.encurtadorlink.config.exception.UserAlreadyExistsException;
+import com.example.encurtadorlink.config.security.gconfig.SecurityConfig;
+import com.example.encurtadorlink.config.security.userdetails.UserDetailsImpl;
+import com.example.encurtadorlink.config.security.userdetails.UserDetailsServiceImpl;
 import com.example.encurtadorlink.dto.UserCreateDTO;
 import com.example.encurtadorlink.dto.UserResponseDTO;
 import com.example.encurtadorlink.mapper.UserMapper;
@@ -12,12 +15,20 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
+    private final SecurityConfig securityConfig;
+    private final UserDetailsServiceImpl userDetailsService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public UserService (UserRepository userRepository, UserMapper userMapper) {
+    public UserService (UserRepository userRepository, UserMapper userMapper, SecurityConfig securityConfig, UserDetailsServiceImpl userDetailsService) {
+        this.securityConfig = securityConfig;
+        this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+    }
+
+    public UserDetailsImpl getUserByEmail(String email){
+        return (UserDetailsImpl) userDetailsService.loadUserByUsername(email);
     }
 
     private boolean isEmailAvailable(String email) {
@@ -33,6 +44,11 @@ public class UserService {
         }
 
         user.setRole(RoleName.BASIC);
+
+        String password = user.getPassword();
+        password = securityConfig.passwordEncoder().encode(password);
+
+        user.setPassword(password);
 
         saveUser(user);
 
