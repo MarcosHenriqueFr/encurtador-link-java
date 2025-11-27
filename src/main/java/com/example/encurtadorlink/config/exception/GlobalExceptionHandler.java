@@ -14,7 +14,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // TODO: Fazer um método para lidar com exceptions genéricas
+    // TODO: Fazer um método para lidar com exceptions genéricas e também para qualquer exception
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleInvalidDTOInfo(MethodArgumentNotValidException e){

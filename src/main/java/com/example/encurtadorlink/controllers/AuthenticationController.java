@@ -1,6 +1,6 @@
 package com.example.encurtadorlink.controllers;
 
-import com.example.encurtadorlink.config.security.auth.AuthenticationService;
+import com.example.encurtadorlink.config.security.auth.JwtService;
 import com.example.encurtadorlink.dto.LoginRequest;
 import com.example.encurtadorlink.dto.UserCreateDTO;
 import com.example.encurtadorlink.dto.UserResponseDTO;
@@ -26,11 +26,11 @@ public class AuthenticationController {
 
     private final UserService userService;
 
-    private final AuthenticationService authenticationService;
+    private final JwtService jwtService;
 
-    public AuthenticationController (UserService userService, AuthenticationService authenticationService, AuthenticationManager authenticationManager) {
+    public AuthenticationController (UserService userService, JwtService jwtService, AuthenticationManager authenticationManager) {
         this.userService = userService;
-        this.authenticationService = authenticationService;
+        this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
     }
 
@@ -48,7 +48,7 @@ public class AuthenticationController {
                 new UsernamePasswordAuthenticationToken(request.email(), request.password())
         );
 
-        String token = authenticationService.createJWT(authentication);
+        String token = jwtService.generateToken(authentication);
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(token);
