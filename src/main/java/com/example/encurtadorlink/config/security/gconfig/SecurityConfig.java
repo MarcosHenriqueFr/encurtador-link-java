@@ -47,7 +47,7 @@ public class SecurityConfig {
 
     // TODO: Adicionar assim que tiver todos os endpoints feitos
     private final String[] ENDPOINTS_WITH_AUTH = {
-            ""
+            "/api/links"
     };
 
     @Bean
@@ -56,7 +56,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(
                     auth -> {
                         auth.requestMatchers(ENDPOINTS_WITHOUT_AUTH).permitAll()
-                            .anyRequest().authenticated(); // TODO: Depois mudar para denyAll
+                            .requestMatchers(ENDPOINTS_WITH_AUTH).authenticated()
+                            .anyRequest().denyAll(); //TODO: Depois mudar para deny all
                     }
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
