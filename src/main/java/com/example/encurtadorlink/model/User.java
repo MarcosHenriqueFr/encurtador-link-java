@@ -11,10 +11,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.List;
@@ -25,6 +27,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @EqualsAndHashCode(of = "id")
 public class User implements Serializable {
 
@@ -32,7 +35,6 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // O nome do campo da class Link
     @OneToMany(mappedBy = "user")
     private List<Link> links;
 
@@ -42,7 +44,7 @@ public class User implements Serializable {
     @Column(nullable = false, length = 256)
     private String email;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 150)
     private String password;
 
     @Column(length = 20)

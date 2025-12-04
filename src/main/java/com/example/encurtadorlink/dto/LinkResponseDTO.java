@@ -6,6 +6,6 @@ public record LinkResponseDTO (
     Long id,
     String originalUrl,
     String shortCode,
-    UserSummaryDTO user,
+    UserResponseDTO user,
     LocalDateTime creationDate
 ) { }
