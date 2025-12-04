@@ -4,13 +4,17 @@ import com.example.encurtadorlink.config.exception.UserAlreadyExistsException;
 import com.example.encurtadorlink.config.security.gconfig.SecurityConfig;
 import com.example.encurtadorlink.config.security.userdetails.UserDetailsImpl;
 import com.example.encurtadorlink.config.security.userdetails.UserDetailsServiceImpl;
+import com.example.encurtadorlink.dto.LinkResponseDTO;
 import com.example.encurtadorlink.dto.UserCreateDTO;
 import com.example.encurtadorlink.dto.UserResponseDTO;
 import com.example.encurtadorlink.mapper.UserMapper;
+import com.example.encurtadorlink.model.Link;
 import com.example.encurtadorlink.model.RoleName;
 import com.example.encurtadorlink.model.User;
 import com.example.encurtadorlink.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class UserService {
@@ -53,6 +57,11 @@ public class UserService {
         saveUser(user);
 
         return userMapper.fromEntity(user);
+    }
+
+    public User showLinksPerUser(String email){
+        UserDetailsImpl userAuthenticated = getUserByEmail(email);
+        return userAuthenticated.getUser();
     }
 
     private void saveUser(User user) {

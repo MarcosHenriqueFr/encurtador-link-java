@@ -6,21 +6,26 @@ import com.example.encurtadorlink.dto.LinkCreateDTO;
 import com.example.encurtadorlink.dto.LinkResponseDTO;
 import com.example.encurtadorlink.mapper.LinkMapper;
 import com.example.encurtadorlink.model.Link;
+import com.example.encurtadorlink.model.User;
 import com.example.encurtadorlink.repositories.LinkRepository;
 import com.example.encurtadorlink.util.Base62;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class LinkService {
     private static final SecureRandom random = new SecureRandom();
     private final LinkMapper linkMapper;
+    private final UserService userService;
     private final LinkRepository linkRepository;
 
-    public LinkService(LinkMapper linkMapper, LinkRepository linkRepository){
+    public LinkService(LinkMapper linkMapper, LinkRepository linkRepository, UserService userService){
         this.linkMapper = linkMapper;
+        this.userService = userService;
         this.linkRepository = linkRepository;
     }
 
@@ -29,7 +34,7 @@ public class LinkService {
         return link == null;
     }
 
-    public LinkResponseDTO shortenLink(LinkCreateDTO dto) {
+    public LinkResponseDTO shortenLink(LinkCreateDTO dto, String email) {
         Link link = linkMapper.toEntity(dto);
 
         String randomShortCode = generateRandomShortCode();
@@ -41,8 +46,9 @@ public class LinkService {
         link.setActive(true);
         link.setQtClicks(0);
 
-        //TODO: Mudar depois a funcionalidade com login de usuário
-        link.setUser(null);
+        System.out.println("The current user is: " + email);
+        link.setUser(userService.getUserByEmail(email).getUser());
+
         link.setCreationDate(LocalDateTime.now());
 
         saveLink(link);
@@ -73,6 +79,15 @@ public class LinkService {
     // TODO: Implementar o log do sistema aqui
     private void saveLink(Link link){
         linkRepository.save(link);
+    }
+
+    public List<LinkResponseDTO> showLinksPerUser(String subject){
+        User user = userService.showLinksPerUser(subject);
+        List<Link> links = user.getLinks();
+
+        return links.stream()
+                .map(linkMapper::fromEntity)
+                .toList();
     }
 
     private String generateRandomShortCode(){

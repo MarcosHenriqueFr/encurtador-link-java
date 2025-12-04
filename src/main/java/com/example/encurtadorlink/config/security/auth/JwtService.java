@@ -38,6 +38,8 @@ public class JwtService {
                 .claim("scope", scopes)
                 .build();
 
+        //TODO: Mudar para um logger
+        System.out.println("User Authenticated successfully: " + authentication.getName());
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 

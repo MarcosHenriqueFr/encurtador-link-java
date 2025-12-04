@@ -41,7 +41,7 @@ public class User implements Serializable {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, length = 256)
+    @Column(nullable = false, length = 256, unique = true)
     private String email;
 
     @Column(nullable = false, length = 150)
