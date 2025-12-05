@@ -29,6 +29,7 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 @EqualsAndHashCode(of = "id")
+@Builder(toBuilder = true)
 public class User implements Serializable {
 
     @Id
