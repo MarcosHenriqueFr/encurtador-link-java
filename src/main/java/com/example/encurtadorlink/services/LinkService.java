@@ -18,15 +18,16 @@ import java.util.List;
 
 @Service
 public class LinkService {
-    private static final SecureRandom random = new SecureRandom();
     private final LinkMapper linkMapper;
     private final UserService userService;
     private final LinkRepository linkRepository;
+    private final ShortCodeGenerator shortCodeGenerator;
 
-    public LinkService(LinkMapper linkMapper, LinkRepository linkRepository, UserService userService){
+    public LinkService(LinkMapper linkMapper, LinkRepository linkRepository, UserService userService, ShortCodeGenerator shortCodeGenerator){
         this.linkMapper = linkMapper;
         this.userService = userService;
         this.linkRepository = linkRepository;
+        this.shortCodeGenerator = shortCodeGenerator;
     }
 
     private boolean isShortCodeAvailable(String shortCode){
@@ -37,7 +38,7 @@ public class LinkService {
     public LinkResponseDTO shortenLink(LinkCreateDTO dto, String email) {
         Link link = linkMapper.toEntity(dto);
 
-        String randomShortCode = generateRandomShortCode();
+        String randomShortCode = shortCodeGenerator.generate();
         if (!isShortCodeAvailable(randomShortCode)){
             throw new ShortURLAlreadyExistsException("This short URI is not available.");
         }
@@ -88,10 +89,5 @@ public class LinkService {
         return links.stream()
                 .map(linkMapper::fromEntity)
                 .toList();
-    }
-
-    private String generateRandomShortCode(){
-        long randomNumber = Math.abs(random.nextLong() % 100_000_000_000L);
-        return Base62.encode(randomNumber);
     }
 }

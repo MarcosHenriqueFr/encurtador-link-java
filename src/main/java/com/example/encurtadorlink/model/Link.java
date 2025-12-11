@@ -30,7 +30,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
+@Builder(toBuilder = true)
 @ToString
 @EqualsAndHashCode(of = "id")
 public class Link implements Serializable {

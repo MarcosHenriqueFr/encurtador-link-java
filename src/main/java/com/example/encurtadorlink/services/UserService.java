@@ -12,6 +12,7 @@ import com.example.encurtadorlink.model.Link;
 import com.example.encurtadorlink.model.RoleName;
 import com.example.encurtadorlink.model.User;
 import com.example.encurtadorlink.repositories.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,15 +20,15 @@ import java.util.List;
 @Service
 public class UserService {
 
-    private final SecurityConfig securityConfig;
+    private final PasswordEncoder passwordEncoder;
     private final UserDetailsServiceImpl userDetailsService;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public UserService (UserRepository userRepository, UserMapper userMapper, SecurityConfig securityConfig, UserDetailsServiceImpl userDetailsService) {
-        this.securityConfig = securityConfig;
+    public UserService (UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, UserDetailsServiceImpl userDetailsService) {
         this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
     }
 
@@ -50,7 +51,7 @@ public class UserService {
         user.setRole(RoleName.BASIC);
 
         String password = user.getPassword();
-        password = securityConfig.passwordEncoder().encode(password);
+        password = passwordEncoder.encode(password);
 
         user.setPassword(password);
 
