@@ -44,5 +44,14 @@ public class LinkController {
         return ResponseEntity
                 .ok(links);
     }
+
+    @DeleteMapping(path = "links/{shortCode}")
+    public ResponseEntity<Void> deleteLink(@PathVariable String shortCode, @AuthenticationPrincipal Jwt jwt){
+        linkService.deleteLink(jwt.getSubject(), shortCode);
+
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .build();
+    }
 }
 

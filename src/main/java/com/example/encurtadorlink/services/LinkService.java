@@ -8,16 +8,18 @@ import com.example.encurtadorlink.mapper.LinkMapper;
 import com.example.encurtadorlink.model.Link;
 import com.example.encurtadorlink.model.User;
 import com.example.encurtadorlink.repositories.LinkRepository;
-import com.example.encurtadorlink.util.Base62;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 public class LinkService {
+
+    private static final Logger logger = LoggerFactory.getLogger(LinkService.class);
+
     private final LinkMapper linkMapper;
     private final UserService userService;
     private final LinkRepository linkRepository;
@@ -80,6 +82,12 @@ public class LinkService {
     // TODO: Implementar o log do sistema aqui
     private void saveLink(Link link){
         linkRepository.save(link);
+        logger.info("O link de short code {} foi criado com sucesso.", link.getShortCode());
+    }
+
+    private void deleteLink(Link link){
+        linkRepository.delete(link);
+        logger.info("O link de short code {} foi excluído com sucesso.", link.getShortCode());
     }
 
     public List<LinkResponseDTO> showLinksPerUser(String subject){
@@ -89,5 +97,17 @@ public class LinkService {
         return links.stream()
                 .map(linkMapper::fromEntity)
                 .toList();
+    }
+
+    public void deleteLink(String email, String shortCode) {
+        User user = userService.getUserByEmail(email).getUser();
+        List<Link> links = user.getLinks();
+
+        Link toBeDeleted = links.stream()
+                .filter(link -> shortCode.equals(link.getShortCode()))
+                .findFirst()
+                .orElseThrow(() -> new ShortURLNotFoundException("This short code does not belong to this user."));
+
+        deleteLink(toBeDeleted);
     }
 }
