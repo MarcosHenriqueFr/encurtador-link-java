@@ -11,6 +11,7 @@ import com.example.encurtadorlink.repositories.LinkRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -79,15 +80,9 @@ public class LinkService {
         return link.getOriginalUrl();
     }
 
-    // TODO: Implementar o log do sistema aqui
     private void saveLink(Link link){
         linkRepository.save(link);
         logger.info("O link de short code {} foi criado com sucesso.", link.getShortCode());
-    }
-
-    private void deleteLink(Link link){
-        linkRepository.delete(link);
-        logger.info("O link de short code {} foi excluído com sucesso.", link.getShortCode());
     }
 
     public List<LinkResponseDTO> showLinksPerUser(String subject){
@@ -99,7 +94,9 @@ public class LinkService {
                 .toList();
     }
 
-    public void deleteLink(String email, String shortCode) {
+    // Usando o ORM
+    @Transactional
+    public void deleteShortLink(String email, String shortCode) {
         User user = userService.getUserByEmail(email).getUser();
         List<Link> links = user.getLinks();
 
@@ -108,6 +105,8 @@ public class LinkService {
                 .findFirst()
                 .orElseThrow(() -> new ShortURLNotFoundException("This short code does not belong to this user."));
 
-        deleteLink(toBeDeleted);
+        links.remove(toBeDeleted);
+
+        logger.info("O link de short code {} foi excluído.", shortCode);
     }
 }

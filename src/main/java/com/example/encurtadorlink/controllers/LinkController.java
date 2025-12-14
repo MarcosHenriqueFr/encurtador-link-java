@@ -22,6 +22,7 @@ public class LinkController {
         this.linkService = linkService;
     }
 
+    // TODO: Resolver o problema de autorização
     @PostMapping(path = "shorten")
     public ResponseEntity<LinkResponseDTO> shortenLink(@RequestBody LinkCreateDTO dto, Authentication authentication){
         Jwt jwt = null;
@@ -46,8 +47,8 @@ public class LinkController {
     }
 
     @DeleteMapping(path = "links/{shortCode}")
-    public ResponseEntity<Void> deleteLink(@PathVariable String shortCode, @AuthenticationPrincipal Jwt jwt){
-        linkService.deleteLink(jwt.getSubject(), shortCode);
+    public ResponseEntity<Void> deleteShortLink(@PathVariable String shortCode, @AuthenticationPrincipal Jwt jwt){
+        linkService.deleteShortLink(jwt.getSubject(), shortCode);
 
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
