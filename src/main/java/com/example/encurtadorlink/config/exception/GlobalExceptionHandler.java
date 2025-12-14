@@ -1,5 +1,7 @@
 package com.example.encurtadorlink.config.exception;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,14 +16,15 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     // TODO: Fazer um método para lidar com exceptions genéricas e também para qualquer exception
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleInvalidDTOInfo(MethodArgumentNotValidException e){
 
-        // TODO: Mudar posteriormente para um logger
-        System.out.println("Request validation exception: " + e.getMessage());
-        System.out.println("Exception path: " + e);
+        logger.error("Request validation exception: {}", e.getMessage());
+        logger.error("Exception path: ", e);
 
         HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
 
@@ -52,8 +55,8 @@ public class GlobalExceptionHandler {
 
         String message = e.getMessage();
 
-        System.out.println("User not available exception: " + message);
-        System.out.println("Exception path: " + e);
+        logger.error("User not available exception: {}", message);
+        logger.error("Exception path: ", e);
 
         ErrorResponse errorResponse = new ErrorResponse(
             LocalDateTime.now(),

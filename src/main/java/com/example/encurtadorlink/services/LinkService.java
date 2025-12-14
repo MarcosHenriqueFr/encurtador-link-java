@@ -50,13 +50,14 @@ public class LinkService {
         link.setActive(true);
         link.setQtClicks(0);
 
-        System.out.println("The current user is: " + email);
-        link.setUser(userService.getUserByEmail(email).getUser());
+        User user = userService.getUserByEmail(email).getUser();
+        link.setUser(user);
 
         link.setCreationDate(LocalDateTime.now());
 
         saveLink(link);
 
+        logger.info("The user {} has the current short code: {}", user.getName(), link.getShortCode());
         return linkMapper.fromEntity(link);
     }
 
@@ -82,7 +83,7 @@ public class LinkService {
 
     private void saveLink(Link link){
         linkRepository.save(link);
-        logger.info("O link de short code {} foi criado com sucesso.", link.getShortCode());
+        logger.info("The shortened link {} was created successfully.", link.getShortCode());
     }
 
     public List<LinkResponseDTO> showLinksPerUser(String subject){
@@ -107,6 +108,6 @@ public class LinkService {
 
         links.remove(toBeDeleted);
 
-        logger.info("O link de short code {} foi excluído.", shortCode);
+        logger.info("The shortened link {} was excluded.", shortCode);
     }
 }

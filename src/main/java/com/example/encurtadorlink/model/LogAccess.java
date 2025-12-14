@@ -22,7 +22,7 @@ public class LogAccess implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "link_id", referencedColumnName = "id", nullable = false)
     private Link link;
 

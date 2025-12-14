@@ -1,5 +1,7 @@
 package com.example.encurtadorlink.config.security.auth;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,6 +17,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class JwtService {
+
+    private static final Logger logger = LoggerFactory.getLogger(JwtService.class);
 
     private final JwtEncoder jwtEncoder;
 
@@ -38,8 +42,7 @@ public class JwtService {
                 .claim("scope", scopes)
                 .build();
 
-        //TODO: Mudar para um logger
-        System.out.println("User Authenticated successfully: " + authentication.getName());
+        logger.info("User {} authenticated successfully.", authentication.getName());
         return jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 

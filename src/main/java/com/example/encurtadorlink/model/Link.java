@@ -43,7 +43,7 @@ public class Link implements Serializable {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToMany(mappedBy = "link")
+    @OneToMany(mappedBy = "link", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LogAccess> log;
 
     private boolean active;

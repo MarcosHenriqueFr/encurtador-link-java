@@ -1,6 +1,5 @@
 package com.example.encurtadorlink.controllers;
 
-import com.example.encurtadorlink.dto.LinkResponseDTO;
 import com.example.encurtadorlink.services.LinkService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ public class RedirectController {
 
     @GetMapping(path = "{shortCode}")
     public ResponseEntity<Void> redirect(@PathVariable String shortCode){
-        // TODO: Colocar um exception handler para tratar a exceção
         String originalUrl = linkService.resolveShortCode(shortCode);
         return ResponseEntity
                 .status(HttpStatus.FOUND)

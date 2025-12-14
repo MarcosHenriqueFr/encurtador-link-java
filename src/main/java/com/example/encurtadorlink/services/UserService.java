@@ -12,6 +12,8 @@ import com.example.encurtadorlink.model.Link;
 import com.example.encurtadorlink.model.RoleName;
 import com.example.encurtadorlink.model.User;
 import com.example.encurtadorlink.repositories.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ import java.util.List;
 
 @Service
 public class UserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsServiceImpl userDetailsService;
@@ -67,5 +71,6 @@ public class UserService {
 
     private void saveUser(User user) {
         userRepository.save(user);
+        logger.info("The user {} was created successfully.", user.getEmail());
     }
 }
