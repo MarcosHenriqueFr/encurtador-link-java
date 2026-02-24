@@ -42,7 +42,9 @@ public class LinkController {
         }
 
         LinkResponseDTO link = linkService.shortenLink(dto, email);
-        return new ResponseEntity<>(link, HttpStatus.CREATED);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(link);
     }
 
     @GetMapping(path = "links")
