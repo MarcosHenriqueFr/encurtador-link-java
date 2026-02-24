@@ -10,12 +10,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+@Builder
 @Entity
 @Table(name = "log_access")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class LogAccess implements Serializable {
 
     @Id
@@ -29,12 +35,12 @@ public class LogAccess implements Serializable {
     @Column(name = "access_date", nullable = false)
     private LocalDateTime accessDate;
 
-    @Column(name = "user_agent", length = 50)
+    @Column(name = "user_agent", length = 255)
     private String userAgent;
 
     @Column(name = "user_ip", length = 80)
     private String userIp;
 
-    @Column
+    @Column(length = 255)
     private String referrer;
 }

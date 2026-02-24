@@ -2,10 +2,12 @@ package com.example.encurtadorlink.services;
 
 import com.example.encurtadorlink.config.exception.ShortURLAlreadyExistsException;
 import com.example.encurtadorlink.config.exception.ShortURLNotFoundException;
+import com.example.encurtadorlink.dto.AccessContextDTO;
 import com.example.encurtadorlink.dto.LinkCreateDTO;
 import com.example.encurtadorlink.dto.LinkResponseDTO;
 import com.example.encurtadorlink.mapper.LinkMapper;
 import com.example.encurtadorlink.model.Link;
+import com.example.encurtadorlink.model.LogAccess;
 import com.example.encurtadorlink.model.User;
 import com.example.encurtadorlink.repositories.LinkRepository;
 import org.slf4j.Logger;
@@ -23,12 +25,14 @@ public class LinkService {
 
     private final LinkMapper linkMapper;
     private final UserService userService;
+    private final LogAccessService logAccessService;
     private final LinkRepository linkRepository;
     private final ShortCodeGenerator shortCodeGenerator;
 
-    public LinkService(LinkMapper linkMapper, LinkRepository linkRepository, UserService userService, ShortCodeGenerator shortCodeGenerator){
+    public LinkService(LogAccessService logAccessService, LinkMapper linkMapper, LinkRepository linkRepository, UserService userService, ShortCodeGenerator shortCodeGenerator){
         this.linkMapper = linkMapper;
         this.userService = userService;
+        this.logAccessService = logAccessService;
         this.linkRepository = linkRepository;
         this.shortCodeGenerator = shortCodeGenerator;
     }
@@ -97,19 +101,23 @@ public class LinkService {
      * @param shortCode vindo do path URI da requisição
      * @return A url original registrada no banco de dados
      */
-    public String resolveShortCode(String shortCode){
-        Link link = linkRepository.findByShortCode(shortCode).orElse(null);
+    @Transactional
+    public String resolveShortCode(String shortCode, AccessContextDTO contextDTO){
+        // Evitar o orElse(null)
+        Link link = linkRepository.findByShortCode(shortCode).orElseThrow(
+                () -> new ShortURLNotFoundException("This URI could not be resolved.")
+        );
 
-        if (link == null){
-            throw new ShortURLNotFoundException("This URI could not be resolved.");
-        }
+        updateChanges(link);
 
-        int qtFinalClicks = link.getQtClicks() + 1;
-        link.setQtClicks(qtFinalClicks);
-
-        saveLink(link);
+        logAccessService.registerLogAccess(link, contextDTO);
 
         return link.getOriginalUrl();
+    }
+
+    private void updateChanges(Link link){
+        int qtFinalClicks = link.getQtClicks() + 1;
+        link.setQtClicks(qtFinalClicks);
     }
 
     private void saveLink(Link link){
