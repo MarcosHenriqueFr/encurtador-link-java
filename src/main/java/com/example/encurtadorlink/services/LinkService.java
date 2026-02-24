@@ -39,32 +39,57 @@ public class LinkService {
     }
 
     public LinkResponseDTO shortenLink(LinkCreateDTO dto, String email) {
-        Link link = linkMapper.toEntity(dto);
+        Link link = convertBaseLink(dto);
 
+        assignShortCode(link);
+
+        applyDefaults(link);
+
+        attachUserContext(email, link);
+
+        saveLink(link);
+
+        return linkMapper.fromEntity(link);
+    }
+
+    private Link convertBaseLink(LinkCreateDTO dto){
+        return linkMapper.toEntity(dto);
+    }
+
+    private void assignShortCode(Link link){
         String randomShortCode = shortCodeGenerator.generate();
         if (!isShortCodeAvailable(randomShortCode)){
             throw new ShortURLAlreadyExistsException("This short URI is not available.");
         }
 
         link.setShortCode(randomShortCode);
+    }
+
+    private void applyDefaults(Link link){
         link.setActive(true);
         link.setQtClicks(0);
         link.setCreationDate(LocalDateTime.now());
+    }
 
+    private void attachUserContext(String email, Link link){
         // SEMPRE tratar erro de email nulo para permitir usuário anônimo
         if(email != null){
-            User user = userService.getUserByEmail(email).getUser();
-            link.setUser(user);
-
-            logger.info("User {} created short code {}", user.getName(), link.getShortCode());
+            attachAuthenticatedUser(email, link);
         } else {
-            link.setUser(null);
-            logger.info("Anonymous user created short code {}", link.getShortCode());
+            attachAnonymousUser(link);
         }
+    }
 
-        saveLink(link);
+    private void attachAnonymousUser(Link link) {
+        link.setUser(null);
+        logger.info("Anonymous user created short code {}", link.getShortCode());
+    }
 
-        return linkMapper.fromEntity(link);
+    private void attachAuthenticatedUser(String email, Link link) {
+        User user = userService.getUserByEmail(email).getUser();
+        link.setUser(user);
+
+        logger.info("User {} created short code {}", user.getName(), link.getShortCode());
     }
 
     /**
