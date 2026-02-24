@@ -49,15 +49,21 @@ public class LinkService {
         link.setShortCode(randomShortCode);
         link.setActive(true);
         link.setQtClicks(0);
-
-        User user = userService.getUserByEmail(email).getUser();
-        link.setUser(user);
-
         link.setCreationDate(LocalDateTime.now());
+
+        // SEMPRE tratar erro de email nulo para permitir usuário anônimo
+        if(email != null){
+            User user = userService.getUserByEmail(email).getUser();
+            link.setUser(user);
+
+            logger.info("User {} created short code {}", user.getName(), link.getShortCode());
+        } else {
+            link.setUser(null);
+            logger.info("Anonymous user created short code {}", link.getShortCode());
+        }
 
         saveLink(link);
 
-        logger.info("The user {} has the current short code: {}", user.getName(), link.getShortCode());
         return linkMapper.fromEntity(link);
     }
 

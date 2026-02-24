@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api")
+@RequestMapping("/api")
 public class LinkController {
 
     private final LinkService linkService;
@@ -22,8 +22,7 @@ public class LinkController {
         this.linkService = linkService;
     }
 
-    // TODO: Resolver o problema de autorização
-    @PostMapping(path = "shorten")
+    @PostMapping("/shorten")
     public ResponseEntity<LinkResponseDTO> shortenLink(@RequestBody LinkCreateDTO dto, Authentication authentication){
         Jwt jwt = null;
         if(authentication != null && authentication.getPrincipal() instanceof Jwt jwtPrincipal){

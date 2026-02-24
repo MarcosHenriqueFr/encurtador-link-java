@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,16 +39,18 @@ public class SecurityConfig {
     @Value("${jwt.public.key}")
     private RSAPublicKey publicKey;
 
-    private final String[] ENDPOINTS_WITHOUT_AUTH = {
-            "/{shortCode}",
+    private final String[] PUBLIC_POST_ENDPOINTS = {
             "/api/shorten",
             "/users/login",
             "/users/register"
     };
 
-    private final String[] ENDPOINTS_WITH_AUTH = {
-            "/api/links",
-            "/api/links/{shortCode}"
+    private final String[] PUBLIC_GET_REDIRECT = {
+            "/*"
+    };
+
+    private final String[] PROTECTED_ENDPOINTS = {
+            "/api/links/**"
     };
 
     @Bean
@@ -55,9 +58,11 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(
                     auth -> {
-                        auth.requestMatchers(ENDPOINTS_WITHOUT_AUTH).permitAll()
-                            .requestMatchers(ENDPOINTS_WITH_AUTH).authenticated()
-                            .anyRequest().authenticated();
+                        auth
+                                .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
+                                .requestMatchers(HttpMethod.GET, PUBLIC_GET_REDIRECT).permitAll()
+                                .requestMatchers(PROTECTED_ENDPOINTS).authenticated()
+                                .anyRequest().denyAll();
                     }
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
