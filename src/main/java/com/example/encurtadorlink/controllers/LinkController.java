@@ -22,6 +22,13 @@ public class LinkController {
         this.linkService = linkService;
     }
 
+    /**
+     * <p>
+     *     Essa requisição trata tanto de usuários que tem conta no sistema, quanto os que não tem.
+     *     Ela analisa se a requisição JWT chegou e adiciona um email se isso for verdade,
+     *     caso não seja, o email nulo é mandado para a camada de service.
+     * </p>
+     * */
     @PostMapping("/shorten")
     public ResponseEntity<LinkResponseDTO> shortenLink(@RequestBody LinkCreateDTO dto, Authentication authentication){
         Jwt jwt = null;
