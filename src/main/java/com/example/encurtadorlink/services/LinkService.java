@@ -1,5 +1,6 @@
 package com.example.encurtadorlink.services;
 
+import com.example.encurtadorlink.config.exception.ForbiddenException;
 import com.example.encurtadorlink.config.exception.ShortURLAlreadyExistsException;
 import com.example.encurtadorlink.config.exception.ShortURLNotFoundException;
 import com.example.encurtadorlink.dto.AccessContextDTO;
@@ -8,7 +9,6 @@ import com.example.encurtadorlink.dto.LinkResponseDTO;
 import com.example.encurtadorlink.dto.LogResponseDTO;
 import com.example.encurtadorlink.mapper.LinkMapper;
 import com.example.encurtadorlink.model.Link;
-import com.example.encurtadorlink.model.LogAccess;
 import com.example.encurtadorlink.model.User;
 import com.example.encurtadorlink.repositories.LinkRepository;
 import org.slf4j.Logger;
@@ -30,12 +30,12 @@ public class LinkService {
     private final LinkRepository linkRepository;
     private final ShortCodeGenerator shortCodeGenerator;
 
-    public LinkService(LogAccessService logAccessService, LinkMapper linkMapper, LinkRepository linkRepository, UserService userService, ShortCodeGenerator shortCodeGenerator){
+    public LinkService(LinkMapper linkMapper, LinkRepository linkRepository, UserService userService, ShortCodeGenerator shortCodeGenerator, LogAccessService logAccessService){
         this.linkMapper = linkMapper;
         this.userService = userService;
-        this.logAccessService = logAccessService;
         this.linkRepository = linkRepository;
         this.shortCodeGenerator = shortCodeGenerator;
+        this.logAccessService = logAccessService;
     }
 
     private boolean isShortCodeAvailable(String shortCode){
@@ -171,7 +171,7 @@ public class LinkService {
         boolean sameUser = link.getUser().getId().equals(user.getId());
 
         if(!sameUser){
-            throw new ShortURLNotFoundException("This short code does not belong to this user.");
+            throw new ForbiddenException("User does not own this resource.");
         }
     }
 }

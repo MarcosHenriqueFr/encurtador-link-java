@@ -39,6 +39,9 @@ class LinkServiceTest {
     @Mock
     private ShortCodeGenerator shortCodeGenerator;
 
+    @Mock
+    private LogAccessService logAccessService;
+
     private AutoCloseable closeable;
 
     private LinkService linkService;
@@ -47,7 +50,7 @@ class LinkServiceTest {
     @BeforeEach
     void setup(){
         closeable = MockitoAnnotations.openMocks(this);
-        linkService = new LinkService(linkMapper, linkRepository, userService, shortCodeGenerator);
+        linkService = new LinkService(linkMapper, linkRepository, userService, shortCodeGenerator, logAccessService);
     }
 
     @AfterEach
