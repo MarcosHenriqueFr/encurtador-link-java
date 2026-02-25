@@ -169,6 +169,7 @@ public class LinkService {
         return link;
     }
 
+    // Esse código não valida caso o link não tenha nenhum usuário, o que pode retornar um NullPointerException
     private void validateOwnership(Link link, User user){
         boolean sameUser = link.getUser().getId().equals(user.getId());
 
