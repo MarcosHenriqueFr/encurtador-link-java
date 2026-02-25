@@ -50,7 +50,8 @@ public class SecurityConfig {
     };
 
     private final String[] PROTECTED_ENDPOINTS = {
-            "/api/links/**"
+            "/api/links/**",
+            "/api/info/**"
     };
 
     @Bean
@@ -62,7 +63,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.POST, PUBLIC_POST_ENDPOINTS).permitAll()
                                 .requestMatchers(HttpMethod.GET, PUBLIC_GET_REDIRECT).permitAll()
                                 .requestMatchers(PROTECTED_ENDPOINTS).authenticated()
-                                .anyRequest().denyAll();
+                                .anyRequest().authenticated();
                     }
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

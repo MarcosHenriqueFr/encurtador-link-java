@@ -2,6 +2,7 @@ package com.example.encurtadorlink.controllers;
 
 import com.example.encurtadorlink.dto.LinkCreateDTO;
 import com.example.encurtadorlink.dto.LinkResponseDTO;
+import com.example.encurtadorlink.dto.LogResponseDTO;
 import com.example.encurtadorlink.services.LinkService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -61,6 +62,14 @@ public class LinkController {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .build();
+    }
+
+    @GetMapping("/info/{shortCode}")
+    public ResponseEntity<List<LogResponseDTO>> getShortLinkInfo(@PathVariable String shortCode, @AuthenticationPrincipal Jwt jwt){
+        List<LogResponseDTO> info = linkService.getLinkInformation(jwt.getSubject(), shortCode);
+
+        return ResponseEntity
+                .ok(info);
     }
 }
 
