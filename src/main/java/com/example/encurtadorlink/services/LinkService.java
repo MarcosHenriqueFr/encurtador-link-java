@@ -5,6 +5,7 @@ import com.example.encurtadorlink.config.exception.ShortURLNotFoundException;
 import com.example.encurtadorlink.dto.AccessContextDTO;
 import com.example.encurtadorlink.dto.LinkCreateDTO;
 import com.example.encurtadorlink.dto.LinkResponseDTO;
+import com.example.encurtadorlink.dto.LogResponseDTO;
 import com.example.encurtadorlink.mapper.LinkMapper;
 import com.example.encurtadorlink.model.Link;
 import com.example.encurtadorlink.model.LogAccess;
@@ -148,5 +149,29 @@ public class LinkService {
         links.remove(toBeDeleted);
 
         logger.info("The shortened link {} was excluded.", shortCode);
+    }
+
+    public List<LogResponseDTO> getLinkInformation(String email, String shortCode) {
+        User user = userService.getUserByEmail(email).getUser();
+        Link link = getLinkByShortCode(shortCode);
+
+        validateOwnership(link, user);
+
+        return logAccessService.formatLogs(link.getId());
+    }
+
+    // Um mét-do para centralizar as buscas por links específicos
+    private Link getLinkByShortCode(String shortCode){
+        return linkRepository.findByShortCode(shortCode).orElseThrow(
+                () -> new ShortURLNotFoundException("This URI could not be resolved")
+        );
+    }
+
+    private void validateOwnership(Link link, User user){
+        boolean sameUser = link.getUser().getId().equals(user.getId());
+
+        if(!sameUser){
+            throw new ShortURLNotFoundException("This short code does not belong to this user.");
+        }
     }
 }
