@@ -64,6 +64,7 @@ public class LinkController {
                 .build();
     }
 
+    // Pode crescer muito, e essas listas podem ser adaptadas para melhor performance
     @GetMapping("/info/{shortCode}")
     public ResponseEntity<List<LogResponseDTO>> getShortLinkInfo(@PathVariable String shortCode, @AuthenticationPrincipal Jwt jwt){
         List<LogResponseDTO> info = linkService.getLinkInformation(jwt.getSubject(), shortCode);

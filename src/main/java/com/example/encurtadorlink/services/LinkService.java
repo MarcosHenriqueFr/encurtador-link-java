@@ -153,18 +153,20 @@ public class LinkService {
 
     public List<LogResponseDTO> getLinkInformation(String email, String shortCode) {
         User user = userService.getUserByEmail(email).getUser();
-        Link link = getLinkByShortCode(shortCode);
-
-        validateOwnership(link, user);
+        Link link = getOwnedLink(shortCode, user);
 
         return logAccessService.formatLogs(link.getId());
     }
 
-    // Um mét-do para centralizar as buscas por links específicos
-    private Link getLinkByShortCode(String shortCode){
-        return linkRepository.findByShortCode(shortCode).orElseThrow(
+    // Já faz a validação se o link é do usuário, como é a regra de negócio
+    private Link getOwnedLink(String shortCode, User user){
+        Link link =  linkRepository.findByShortCode(shortCode).orElseThrow(
                 () -> new ShortURLNotFoundException("This URI could not be resolved")
         );
+
+        validateOwnership(link, user);
+
+        return link;
     }
 
     private void validateOwnership(Link link, User user){
