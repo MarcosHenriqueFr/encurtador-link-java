@@ -15,7 +15,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Builder
+@Builder(toBuilder = true)
 @Entity
 @Table(name = "log_access")
 @NoArgsConstructor
