@@ -45,6 +45,15 @@ public class UserService {
         return user == null;
     }
 
+    /**
+     * <p>
+     *     Essa função agrupa toda a checagem para criar um usuário.
+     *     Ou seja, checa se o email já existe, assimila um cargo do sistema,
+     *     encoda a sua senha usando BCrypt e salva o usuário no banco.
+     * </p>
+     * @param dto
+     * @return As informações que podem voltar para o navegador sem comprometer informações pessoais
+     */
     public UserResponseDTO createUser(UserCreateDTO dto) {
         User user = userMapper.toEntity(dto);
 

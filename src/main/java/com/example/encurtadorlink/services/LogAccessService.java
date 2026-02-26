@@ -43,6 +43,15 @@ public class LogAccessService {
         logger.info("The LOG ACCESS ID {} was saved.", logAccess.getId());
     }
 
+    /**
+     * <p>
+     *     Essa função é usada para separar as responsabilidades do LinkService.
+     *     Ou seja, para que somente esse service tenha acesso ao LogAccessMapper e
+     *     o LogAccessRepository
+     * </p>
+     * @param linkId
+     * @return Lista de logs formatado para visualização do usuário
+     */
     public List<LogResponseDTO> formatLogs(Long linkId) {
 
         List<LogAccess> logs = getLogsByLinkId(linkId);

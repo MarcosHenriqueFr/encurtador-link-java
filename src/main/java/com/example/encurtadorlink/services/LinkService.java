@@ -43,6 +43,15 @@ public class LinkService {
         return link == null;
     }
 
+    /**
+     * <p>
+     *     Essa função é responsável por agrupar todas as informações para o encurtamento do link,
+     *     como: a assimilação de seu código, contexto de usuário, data de criação e qtde. de clicks.
+     * </p>
+     * @param dto agrupa todas as informações para a criação do link
+     * @param email é o subject obtido pelo token JWT
+     * @return LinkResponseDTO - Evita vazar as informações importantes do usuário
+     */
     public LinkResponseDTO shortenLink(LinkCreateDTO dto, String email) {
         Link link = convertBaseLink(dto);
 
@@ -135,7 +144,14 @@ public class LinkService {
                 .toList();
     }
 
-    // Usando o ORM
+    /**
+     * <p>
+     *     Essa função usa o @Transactional para tratar facilmente da bidirecionalidade sem necessitar
+     *     do LinkRepository, tratando diretamente da lista de links do próprio usuário.
+     * </p>
+     * @param email
+     * @param shortCode
+     */
     @Transactional
     public void deleteShortLink(String email, String shortCode) {
         User user = userService.getUserByEmail(email).getUser();
@@ -158,7 +174,15 @@ public class LinkService {
         return logAccessService.formatLogs(link.getId());
     }
 
-    // Já faz a validação se o link é do usuário, como é a regra de negócio
+    /**
+     * <p>
+     *     Essa função é essencial para permitir a modificação do link somente por aquele quem o criou.
+     *     Deve ser sempre usado para qualquer manipulação de um único link.
+     * </p>
+     * @param shortCode
+     * @param user
+     * @return o link para o seu criador
+     */
     private Link getOwnedLink(String shortCode, User user){
         Link link =  linkRepository.findByShortCode(shortCode).orElseThrow(
                 () -> new ShortURLNotFoundException("This URI could not be resolved")
@@ -169,7 +193,6 @@ public class LinkService {
         return link;
     }
 
-    // Esse código não valida caso o link não tenha nenhum usuário, o que pode retornar um NullPointerException
     private void validateOwnership(Link link, User user){
         boolean sameUser = link.getUser().getId().equals(user.getId());
 
