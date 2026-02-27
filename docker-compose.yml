@@ -1,0 +1,83 @@
+
+services:
+  mysql:
+    image: mysql:8
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 5s
+      retries: 10
+    container_name: mysql_db
+    ports:
+      - "3307:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: banco_links
+    networks:
+      - app-network
+
+  app:
+    image: marcoshenriquefr/encurtadorlink:latest
+    container_name: spring_app
+    depends_on:
+      mysql:
+        condition: service_healthy
+    volumes:
+      - ./keys:/keys:z
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/banco_links
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 12345
+      JWT_PRIVATE_KEY_PATH: file:/keys/app.key
+      JWT_PUBLIC_KEY_PATH: file:/keys/app.pub
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(`encurtador.localhost`)"
+      - "traefik.http.services.app.loadbalancer.server.port=8080"
+    networks:
+      - app-network
+
+  socket-proxy:
+    image: ghcr.io/tecnativa/docker-socket-proxy:0.3.0
+    container_name: socket-proxy
+    restart: unless-stopped
+    environment:
+      CONTAINERS: 1
+      SERVICES: 1
+      TASKS: 1
+      VERSION: 1
+      NETWORKS: 1
+      INFO: 1
+      AUTH: 0
+      SECRETS: 0
+      POST: 0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:z
+    networks:
+      - socket-network
+
+  traefik:
+    image: traefik:v3.6.9
+    container_name: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.endpoint=tcp://socket-proxy:2375"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=app-network"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+      - "8080:8080"
+    depends_on:
+      - socket-proxy
+    networks:
+      - socket-network
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+  socket-network:
+    driver: bridge
+    internal: true
