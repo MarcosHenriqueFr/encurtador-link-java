@@ -64,7 +64,6 @@ class JwtServiceTest {
         verify(jwtEncoder, times(1)).encode(any(JwtEncoderParameters.class));
     }
 
-    // Método dedicado para a criação do objeto Authentication
     private Authentication createAuthentication(String email, String role){
         Authentication authentication = mock(Authentication.class);
         when(authentication.getName()).thenReturn(email);
@@ -75,6 +74,4 @@ class JwtServiceTest {
 
         return authentication;
     }
-
-    // TODO: Outros testes que verificam o claimset
 }

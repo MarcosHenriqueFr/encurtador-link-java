@@ -18,8 +18,6 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    // TODO: Fazer um método para lidar com exceptions genéricas e também para qualquer exception
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleInvalidDTOInfo(MethodArgumentNotValidException e){
 

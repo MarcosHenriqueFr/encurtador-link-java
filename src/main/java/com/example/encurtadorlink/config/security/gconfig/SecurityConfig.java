@@ -84,7 +84,7 @@ public class SecurityConfig {
         return converter;
     }
 
-    // TODO: Configurar o CORS posteriormente para ligar ao outro projeto
+    // Possibilidade: Configurar o CORS posteriormente para ligar ao outro projeto
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception{
