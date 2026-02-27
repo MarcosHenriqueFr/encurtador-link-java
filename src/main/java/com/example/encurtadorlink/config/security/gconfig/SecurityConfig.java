@@ -3,6 +3,7 @@ package com.example.encurtadorlink.config.security.gconfig;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,12 +33,6 @@ public class SecurityConfig {
 
     private final String ADMIN_ROLE = "ADMINISTRATOR";
     private final String BASIC_ROLE = "BASIC";
-
-    @Value("${jwt.private.key}")
-    private RSAPrivateKey privateKey;
-
-    @Value("${jwt.public.key}")
-    private RSAPublicKey publicKey;
 
     private final String[] PUBLIC_POST_ENDPOINTS = {
             "/api/shorten",
@@ -97,12 +92,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtDecoder jwtDecoder() {
+    public JwtDecoder jwtDecoder(RSAPublicKey publicKey) {
         return NimbusJwtDecoder.withPublicKey(publicKey).build();
     }
 
     @Bean
-    public JwtEncoder jwtEncoder(){
+    public JwtEncoder jwtEncoder(RSAPublicKey publicKey, RSAPrivateKey privateKey){
         RSAKey jwk = new RSAKey.Builder(publicKey).privateKey(privateKey).build();
         var jwks =  new ImmutableJWKSet<>(new JWKSet(jwk));
         return new NimbusJwtEncoder(jwks);
