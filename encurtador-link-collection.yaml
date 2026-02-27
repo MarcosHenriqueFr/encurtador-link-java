@@ -1,0 +1,167 @@
+openapi: 3.0.0
+info:
+  title: encurtador-link
+  version: 1.0.0
+paths:
+  /api/links/{shortCode}:
+    delete:
+      summary: DELETE LINK ID
+      operationId: home_marcosh_documents_collections_encurtador_links_delete_link_id_bru
+      description: ''
+      tags:
+        - links
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: shortCode
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      security:
+        - delete_link_id: []
+  /api/links:
+    get:
+      summary: GET LINKS
+      operationId: home_marcosh_documents_collections_encurtador_links_get_links_bru
+      description: ''
+      tags:
+        - links
+      responses:
+        '200':
+          description: ''
+      security:
+        - get_links: []
+  /api/info/{shortCode}:
+    get:
+      summary: GET LOG INFO
+      operationId: home_marcosh_documents_collections_encurtador_links_get_log_info_bru
+      description: ''
+      tags:
+        - links
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: shortCode
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+      security:
+        - get_log_info: []
+  /{shortCode}:
+    get:
+      summary: GET REDIRECT
+      operationId: home_marcosh_documents_collections_encurtador_links_get_redirect_bru
+      description: ''
+      tags:
+        - links
+      responses:
+        '200':
+          description: ''
+      parameters:
+        - name: shortCode
+          in: path
+          description: ''
+          required: true
+          schema:
+            type: string
+  /api/shorten:
+    post:
+      summary: POST SHORTEN LINK
+      operationId: >-
+        home_marcosh_documents_collections_encurtador_links_post_shorten_link_bru
+      description: ''
+      tags:
+        - links
+      responses:
+        '200':
+          description: ''
+      requestBody:
+        $ref: '#/components/requestBodies/post_shorten_link'
+  /users/login:
+    post:
+      summary: POST AUTH USER
+      operationId: home_marcosh_documents_collections_encurtador_users_post_auth_user_bru
+      description: ''
+      tags:
+        - users
+      responses:
+        '200':
+          description: ''
+      requestBody:
+        $ref: '#/components/requestBodies/post_auth_user'
+  /users/register:
+    post:
+      summary: POST REGISTER USER
+      operationId: >-
+        home_marcosh_documents_collections_encurtador_users_post_register_user_bru
+      description: ''
+      tags:
+        - users
+      responses:
+        '200':
+          description: ''
+      requestBody:
+        $ref: '#/components/requestBodies/post_register_user'
+servers:
+  - url: http://encurtador.localhost
+components:
+  schemas:
+    post_shorten_link:
+      type: object
+      properties:
+        originalUrl:
+          type: string
+    post_auth_user:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    post_register_user:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+  requestBodies:
+    post_shorten_link:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/post_shorten_link'
+      description: ''
+      required: true
+    post_auth_user:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/post_auth_user'
+      description: ''
+      required: true
+    post_register_user:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/post_register_user'
+      description: ''
+      required: true
+  securitySchemes:
+    delete_link_id:
+      type: http
+      scheme: bearer
+    get_links:
+      type: http
+      scheme: bearer
+    get_log_info:
+      type: http
+      scheme: bearer
