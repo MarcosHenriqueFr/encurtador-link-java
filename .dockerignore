@@ -1,0 +1,6 @@
+
+docker-socket-proxy.pp
+docker-socket-proxy.te
+keys/
+.git/
+.env

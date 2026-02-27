@@ -33,7 +33,8 @@ build/
 .vscode/S
 
 ### Do projeto ###
-
-src/main/resources/application.properties
 src/main/resources/app.key
 src/main/resources/app.pub
+keys/
+docker-socket-proxy.pp
+docker-socket-proxy.te
